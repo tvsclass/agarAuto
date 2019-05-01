@@ -14,6 +14,10 @@ public class AgarMain extends JPanel implements ActionListener {
     // Размер поля (px)
     private final int SIZE = 600;
 
+    // АДСКИЙ РЕЖИМ. НЕ СОВЕТУЮ. НЕ НАДО. Я ПРЕДУПРЕДИЛ.
+    // позваляет запустить несколько дополнительных таймеров. От 1 до бесконечности.
+    private final int HELL_MODE = 0;
+
     //========================================================//
 
 
@@ -21,6 +25,7 @@ public class AgarMain extends JPanel implements ActionListener {
 
     private int reboot;
     private Image sphere;
+    public boolean hellmode;
     private Image apple;
     private int appleX;
     private int appleY;
@@ -67,14 +72,32 @@ public class AgarMain extends JPanel implements ActionListener {
         sphx=100;
         updated_apples=0;
         if(a!=9){
-        score=0;
+            timer = new Timer(speed,this);
+            score=0;
+            timer.start();
+
+            if(HELL_MODE>0){
+                int i = HELL_MODE;
+                while (i!=0){
+                    hellmode=true;
+                    timer = new Timer(speed, this);
+                    timer.start();
+                    i-=1;
+                }
+            }
+            else{
+                hellmode=false;
+            }
         }
-        timer = new Timer(speed,this);
-        timer.start();
+
+
         reboot=0;
 
 
     }
+
+
+
 
     @Override
     protected void paintComponent(Graphics g){
@@ -85,11 +108,18 @@ public class AgarMain extends JPanel implements ActionListener {
         g.drawImage(apple,apple2X,apple2Y,this);
         g.setColor(Color.white);
         g.drawString("Сьедено " + "яблок: " + score,10,15);
-        g.drawString("Спасено от бага " + "яблок: " + updated_apples,15,60);
+        g.drawString("Ошибок за такт: " + updated_apples,15,60);
         g.drawString("Иду к яблоку на " + appleX + "x" + appleY,10,35);
         g.drawString("Целевое Яблоко",appleX - 25,appleY + 50);
+        if(hellmode){
+            g.setColor(Color.red);
+            g.drawString("АДСКИЙ РЕЖИМ",300,15);
+        }
         inited=true;
     }
+
+
+
 
 
     public void findApple(){
@@ -161,11 +191,12 @@ public class AgarMain extends JPanel implements ActionListener {
 
 
         if(steps_to_1==steps_to_2) {
-            System.out.println("Расстояние одинаковое. Спасаю 1 яблоко ");
+            System.out.println("Расстояние одинаковое. Пробую алгоритм 1 ");
             updated_apples++;
 
-            if(updated_apples>30){
-                System.out.println("Счётчик превысил 30. Пробую алгоритм 2 ");
+
+            if(updated_apples>10){
+                System.out.println("Счётчик превысил 10. Пробую алгоритм 2 ");
                 sphx=apple1X;
                 sphy=apple1Y;
                 updated_apples=0;
@@ -277,6 +308,7 @@ public class AgarMain extends JPanel implements ActionListener {
         apple1Y = from + (int) (Math.random() * SIZE); // Генерация y
 
         System.out.println("System: яблоко 1 на " + apple1X + "x" + apple1Y);
+        updated_apples=0;
 
     }
     public void paintApple2(){
@@ -284,6 +316,7 @@ public class AgarMain extends JPanel implements ActionListener {
         apple2Y = from + (int) (Math.random() * SIZE); // Генерация y
 
         System.out.println("System: яблоко 2 на " + apple2X + "x" + apple2Y);
+        updated_apples=0;
     }
 
     @Override
