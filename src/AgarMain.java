@@ -2,6 +2,8 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
 
 public class AgarMain extends JPanel implements ActionListener {
 
@@ -48,17 +50,24 @@ public class AgarMain extends JPanel implements ActionListener {
     private int steps_to_1;
     private int steps_to_2;
     private int updated_apples;
+    private boolean enter;
 
 
 
 
     public AgarMain(){
         setBackground(Color.BLACK);
+        setFocusable(true);
+        addKeyListener(new FieldKeyListener());
         System.out.println("loading images");
         loadImages();
         System.out.println("initializing");
         Init(1);
     }
+
+
+
+
     public void loadImages(){
         System.out.println("loading images...");
         ImageIcon sph = new ImageIcon("sphere.png");
@@ -122,181 +131,160 @@ public class AgarMain extends JPanel implements ActionListener {
 
 
 
-    public void findApple(){
+    public void findApple() {
 
-        objtestx=sphx;
-        objtesty=sphy;
-        steps_to_1=0;
-        steps_to_2=0;
+        if (true) {
+
+            objtestx = sphx;
+            objtesty = sphy;
+            steps_to_1 = 0;
+            steps_to_2 = 0;
 
 
-        do {
+            do {
 
-            if (objtestx > apple1X) {
-                steps_to_1++;
-                objtestx--;
-                if (objtesty > apple1Y) {
+                if (objtestx > apple1X) {
+                    steps_to_1++;
+                    objtestx--;
+                    if (objtesty > apple1Y) {
+                        objtesty--;
+                    } else {
+                        objtesty++;
+                    }
+                } else if (objtestx < apple1X) {
+                    steps_to_1++;
+                    objtestx++;
+                    if (objtesty > apple1Y) {
+                        objtesty--;
+                    } else {
+                        objtesty++;
+                    }
+                } else if (objtesty > apple1Y) {
+                    steps_to_1++;
                     objtesty--;
-                } else {
+                } else if (objtesty < apple1Y) {
+                    steps_to_1++;
                     objtesty++;
                 }
-            } else if (objtestx < apple1X) {
-                steps_to_1++;
-                objtestx++;
-                if (objtesty > apple1Y) {
+                //System.out.println("loop");
+            } while (objtestx != apple1X && objtesty != apple1Y);
+
+            objtestx = sphx;
+            objtesty = sphy;
+
+
+            do {
+                if (objtestx > apple2X) {
+                    steps_to_2++;
+                    objtestx--;
+                    if (objtesty > apple2Y) {
+                        objtesty--;
+                    } else {
+                        objtesty++;
+                    }
+                } else if (objtestx < apple2X) {
+                    steps_to_2++;
+                    objtestx++;
+                    if (objtesty > apple2Y) {
+                        objtesty--;
+                    } else {
+                        objtesty++;
+                    }
+                } else if (objtesty > apple2Y) {
+                    steps_to_2++;
                     objtesty--;
-                } else {
+                } else if (objtesty < apple2Y) {
+                    steps_to_2++;
                     objtesty++;
                 }
-            } else if (objtesty > apple1Y) {
-                steps_to_1++;
-                objtesty--;
-            } else if (objtesty < apple1Y) {
-                steps_to_1++;
-                objtesty++;
-            }
-            //System.out.println("loop");
-        }while (objtestx!=apple1X && objtesty!=apple1Y);
-
-        objtestx=sphx;
-        objtesty=sphy;
+                //System.out.println("loop2 ");
+            } while (objtestx != apple2X && objtesty != apple2Y);
 
 
-        do {
-            if (objtestx > apple2X) {
-                steps_to_2++;
-                objtestx--;
-                if (objtesty > apple2Y) {
-                    objtesty--;
-                } else {
-                    objtesty++;
-                }
-            } else if (objtestx < apple2X) {
-                steps_to_2++;
-                objtestx++;
-                if (objtesty > apple2Y) {
-                    objtesty--;
-                } else {
-                    objtesty++;
-                }
-            } else if (objtesty > apple2Y) {
-                steps_to_2++;
-                objtesty--;
-            } else if (objtesty < apple2Y) {
-                steps_to_2++;
-                objtesty++;
-            }
-            //System.out.println("loop2 ");
-        }while (objtestx!=apple2X && objtesty!=apple2Y);
+            if (steps_to_1 == steps_to_2) {
+                System.out.println("Расстояние одинаковое. Пробую алгоритм 1 ");
+                updated_apples++;
 
-
-        if(steps_to_1==steps_to_2) {
-            System.out.println("Расстояние одинаковое. Пробую алгоритм 1 ");
-            updated_apples++;
-
-
-            if(updated_apples>10){
-                System.out.println("Счётчик превысил 10. Пробую алгоритм 2 ");
-                sphx=apple1X;
-                sphy=apple1Y;
-                updated_apples=0;
-                reboot++;
-                if(reboot==30){
-                    System.out.println("Системная ошибка. Перезагрузка... ");
-                    Init(9);
-                    paintApple1();
-                    paintApple2();
-                }
-            }
-
-            if (sphx < apple1X){
-                sphx+=20;
-                if(sphy < apple1Y){
-                    sphy+=20;
-                }
-                else{
-                    sphy+=20;
-                }
-            }
-            else{
-                sphx-=20;
-                if(sphy < apple1Y){
-                    sphy+=20;
-                }
-                else{
-                    sphy+=20;
-                }
-            }
-
-        }
-        else {
-
-
-            if (steps_to_1 > steps_to_2) {
-                appleX = apple2X;
-                appleY = apple2Y;
-                target = 2;
-            } else {
                 appleX = apple1X;
                 appleY = apple1Y;
                 target = 1;
 
+
+                if (updated_apples > 5) {
+                    System.out.println("Счётчик превысил 5. Пробую алгоритм 2 ");
+                    sphx = apple1X;
+                    sphy = apple1Y;
+                    updated_apples = 0;
+                    reboot++;
+                    if (reboot == 3) {
+                        System.out.println("Системная ошибка. Перезагрузка... ");
+                        Init(9);
+                        paintApple1();
+                        paintApple2();
+                    }
+                }
+
+
+            } else {
+
+
+                if (steps_to_1 > steps_to_2) {
+                    appleX = apple2X;
+                    appleY = apple2Y;
+                    target = 2;
+                } else {
+                    appleX = apple1X;
+                    appleY = apple1Y;
+                    target = 1;
+
+                }
             }
-        }
 
 
-
-        //System.out.println("Шагов до 1 " + steps_to_1);
-        //System.out.println("Шагов до 2 " + steps_to_2);
-        steps_to_2=0;
-        steps_to_1=0;
-
+            //System.out.println("Шагов до 1 " + steps_to_1);
+            //System.out.println("Шагов до 2 " + steps_to_2);
+            steps_to_2 = 0;
+            steps_to_1 = 0;
 
 
- //       if((apple1X + apple1Y) - (sphx + sphy) < (apple2X + apple2Y) - (sphx + sphy)){
-   //         appleX=apple1X;
-     //       appleY=apple1Y;
-       //     target=1;
-        //}
-        //else {
-          //  appleX=apple2X;
+            //       if((apple1X + apple1Y) - (sphx + sphy) < (apple2X + apple2Y) - (sphx + sphy)){
+            //         appleX=apple1X;
+            //       appleY=apple1Y;
+            //     target=1;
+            //}
+            //else {
+            //  appleX=apple2X;
             //appleY=apple2Y;
             //target=2;
-        //}
+            //}
 
 
-        if(sphx > appleX){
-            sphx--;
-            if(sphy > appleY){
+            if (sphx > appleX) {
+                sphx--;
+                if (sphy > appleY) {
+                    sphy--;
+                } else {
+                    sphy++;
+                }
+            } else if (sphx < appleX) {
+                sphx++;
+                if (sphy > appleY) {
+                    sphy--;
+                } else {
+                    sphy++;
+                }
+            } else if (sphy > appleY) {
                 sphy--;
-            }
-            else{
+            } else if (sphy < appleY) {
                 sphy++;
-            }
-        }
-        else if(sphx < appleX){
-            sphx++;
-            if(sphy > appleY){
-                sphy--;
-            }
-            else{
-                sphy++;
-            }
-        }
-        else if(sphy > appleY){
-            sphy--;
-        }
-        else if(sphy < appleY){
-            sphy++;
-        }
-        else{
-            System.out.println("Съел яблоко на " + sphx + "x" + sphy);
-            score++;
-            if(target==1){
-            Apple1Eaten=true;
-            }
-            else{
-                Apple2Eaten=true;
+            } else {
+                System.out.println("Съел яблоко на " + sphx + "x" + sphy);
+                score++;
+                if (target == 1) {
+                    Apple1Eaten = true;
+                } else {
+                    Apple2Eaten = true;
+                }
             }
         }
     }
@@ -309,6 +297,7 @@ public class AgarMain extends JPanel implements ActionListener {
 
         System.out.println("System: яблоко 1 на " + apple1X + "x" + apple1Y);
         updated_apples=0;
+        reboot=0;
 
     }
     public void paintApple2(){
@@ -317,31 +306,54 @@ public class AgarMain extends JPanel implements ActionListener {
 
         System.out.println("System: яблоко 2 на " + apple2X + "x" + apple2Y);
         updated_apples=0;
+        reboot=0;
     }
 
     @Override
     public void actionPerformed(ActionEvent actionEvent) {
 
-        if (Apple1Eaten){
-            paintApple1();
-            Apple1Eaten = false;
-        }
 
-        if (Apple2Eaten){
-            paintApple2();
-            Apple2Eaten = false;
-        }
+            if (Apple1Eaten) {
+                paintApple1();
+                Apple1Eaten = false;
+            }
 
-        findApple();
-        if(debug){
-            System.out.println(sphx + "x" + sphy);
-        }
+            if (Apple2Eaten) {
+                paintApple2();
+                Apple2Eaten = false;
+            }
+
+            findApple();
+            if (debug) {
+                System.out.println(sphx + "x" + sphy);
+            }
 
 
+            if (inited) {
+                repaint();
+            }
+    }
 
+    class FieldKeyListener extends KeyAdapter {
+        @Override
+        public void keyReleased(KeyEvent e) {
+            super.keyPressed(e);
+            int key = e.getKeyCode();
 
-        if (inited){
-            repaint();
+            if(key == KeyEvent.VK_ESCAPE){
+                enter = true;
+                System.out.println("pressed escape");
+                Init(9);
+                score=0;
+            }
+            if(key == KeyEvent.VK_P){
+                hellmode = true;
+                System.out.println("pressed escape");
+                int sc = score;
+                Init(1);
+                score=sc;
+            }
+
         }
     }
 }
