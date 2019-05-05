@@ -1,4 +1,5 @@
 import javax.swing.*;
+import java.awt.event.WindowEvent;
 
 public class MainWindow extends JFrame {
     public MainWindow(){

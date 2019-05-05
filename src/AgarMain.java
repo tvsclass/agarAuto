@@ -5,10 +5,12 @@ import java.awt.event.ActionListener;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 
+import static java.lang.System.exit;
+
 public class AgarMain extends JPanel implements ActionListener {
 
     //========================================================//
-    //                       НАСТРОЙКИ                        //
+    //                       НАСТРОЙКИ                        // **перенесены в меню
     // Скорость шага (ms)
     // Чем меньше, тем быстрее. От 1 до бесконечности
     private int speed = 1;
@@ -18,7 +20,7 @@ public class AgarMain extends JPanel implements ActionListener {
 
     // АДСКИЙ РЕЖИМ. НЕ СОВЕТУЮ. НЕ НАДО. Я ПРЕДУПРЕДИЛ.
     // позваляет запустить несколько дополнительных таймеров. От 1 до бесконечности.
-    private final int HELL_MODE = 0;
+    public static int HELL_MODE = 0;
 
     //========================================================//
 
@@ -27,7 +29,7 @@ public class AgarMain extends JPanel implements ActionListener {
 
     private int reboot;
     private Image sphere;
-    public boolean hellmode;
+    private boolean hellmode;
     private Image apple;
     private int appleX;
     private int appleY;
@@ -51,6 +53,13 @@ public class AgarMain extends JPanel implements ActionListener {
     private int steps_to_2;
     private int updated_apples;
     private boolean enter;
+    private int moveApple1 = 0;
+    private int moveApple2 = 0;
+    private int direction1;
+    private int direction2;
+    private int apple1speed;
+    private int apple2speed;
+
 
 
 
@@ -65,6 +74,13 @@ public class AgarMain extends JPanel implements ActionListener {
         Init(1);
     }
 
+    public void setHELL_MODE(int value){
+        HELL_MODE=value;
+        return;
+    }
+    public int getHELL_MODE(){
+        return HELL_MODE;
+    }
 
 
 
@@ -294,6 +310,8 @@ public class AgarMain extends JPanel implements ActionListener {
     public void paintApple1(){
         apple1X = from + (int) (Math.random() * SIZE); // Генерация x
         apple1Y = from + (int) (Math.random() * SIZE); // Генерация y
+        direction1 = 0 + (int) (Math.random() * 10); // Генерация направления
+        apple1speed = 5 + (int) (Math.random() * 15); // Генерация скорости
 
         System.out.println("System: яблоко 1 на " + apple1X + "x" + apple1Y);
         updated_apples=0;
@@ -303,6 +321,8 @@ public class AgarMain extends JPanel implements ActionListener {
     public void paintApple2(){
         apple2X = from + (int) (Math.random() * SIZE); // Генерация x
         apple2Y = from + (int) (Math.random() * SIZE); // Генерация y
+        direction2 = 0 + (int) (Math.random() * 10); // Генерация направления
+        apple2speed = 5 + (int) (Math.random() * 15); // Генерация скорости
 
         System.out.println("System: яблоко 2 на " + apple2X + "x" + apple2Y);
         updated_apples=0;
@@ -332,6 +352,115 @@ public class AgarMain extends JPanel implements ActionListener {
             if (inited) {
                 repaint();
             }
+
+            if (moveApple1 < apple1speed){
+                moveApple1++;
+            }else{
+
+                if (direction1 == 0){
+                    apple1X++;
+                }
+                else if (direction1 == 1){
+                    apple1X++;
+                    apple1Y++;
+                }
+                else if (direction1 == 2){
+                    apple1Y++;
+                }
+                else if (direction1 == 3){
+                    apple1X++;
+                    apple1Y++;
+                }
+                else if (direction1 == 4){
+                    apple1Y++;
+                }
+                else if (direction1 == 5){
+                    apple1X--;
+                    apple1Y--;
+                }
+                else if (direction1 == 6){
+                    apple1X--;
+                }
+                else if (direction1 == 7){
+                    apple1X--;
+                    apple1Y++;
+                }
+                else if (direction1 == 9){
+                    apple1X++;
+                    apple1Y--;
+                }
+
+                if (apple1X > SIZE){
+                    direction1=7;
+                }
+                if (apple1X < 0){
+                    direction1=9;
+                }
+                if (apple1Y < 0){
+                    direction1=4;
+                }
+                if (apple1Y > SIZE){
+                    direction1=5;
+                }
+                moveApple1=0;
+
+
+            }
+
+        if (moveApple2 < apple2speed){
+            moveApple2++;
+        }else{
+
+            if (direction2 == 0){
+                apple2X++;
+            }
+            else if (direction2 == 1){
+                apple2X++;
+                apple2Y++;
+            }
+            else if (direction2 == 2){
+                apple2Y++;
+            }
+            else if (direction2 == 3){
+                apple2X++;
+                apple2Y++;
+            }
+            else if (direction2 == 4){
+                apple2Y++;
+            }
+            else if (direction2 == 5){
+                apple2X--;
+                apple2Y--;
+            }
+            else if (direction2 == 6){
+                apple2X--;
+            }
+            else if (direction2 == 7){
+                apple2X--;
+                apple2Y++;
+            }
+            else if (direction2 == 9){
+                apple2X++;
+                apple2Y--;
+            }
+
+            if (apple2X > SIZE){
+                direction2=7;
+            }
+            if (apple2X < 0){
+                direction2=9;
+            }
+            if (apple2Y < 0){
+                direction2=4;
+            }
+            if (apple2Y > SIZE){
+                direction2=5;
+            }
+            moveApple2=0;
+
+
+        }
+
     }
 
     class FieldKeyListener extends KeyAdapter {
@@ -352,6 +481,10 @@ public class AgarMain extends JPanel implements ActionListener {
                 int sc = score;
                 Init(1);
                 score=sc;
+            }
+
+            if(key == KeyEvent.VK_E){
+                exit(0);
             }
 
         }
